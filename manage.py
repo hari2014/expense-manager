@@ -5,7 +5,7 @@ from flask_migrate import Migrate, MigrateCommand
 from marshmallow import Schema, fields, ValidationError,pre_load
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/harshit'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:1234@localhost/harshit?sslmode=require'
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
