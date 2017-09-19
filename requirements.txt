@@ -6,7 +6,6 @@ Flask-Migrate
 Flask-Marshmallow
 Flask-WTF
 Psycopg2
-PostgreSQL
 Jinja2==2.7
 MarkupSafe==0.18
 SQLAlchemy==0.8.2
