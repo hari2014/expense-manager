@@ -210,7 +210,7 @@ window.onload=drawChart;
 
 
    var formData = {'amount': amount, 'date' : date,'category': category, 'Description': desc};
-    alert(formData);
+    //alert(formData);
 
         var res=$.ajax({
             type        : 'POST',
@@ -221,7 +221,7 @@ window.onload=drawChart;
             async: false
         }).responseText;
 
-        alert(res);
+       // alert(res);
 
 
 
