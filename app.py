@@ -10,6 +10,8 @@ app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.secret_key = 'super secret key'
+
 
 @app.route("/" )
 def index():
@@ -156,7 +158,6 @@ def detail():
 
 
 if __name__ == "__main__":
-    app.secret_key = 'super secret key'
     db.init_app(app)
     port = int(os.environ.get('PORT', 5000))  # locally PORT 5000, Heroku will assign its own port
     app.run(host='0.0.0.0', port=port)

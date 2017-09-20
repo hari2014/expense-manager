@@ -1,7 +1,6 @@
 
 
   <body>
-
  <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
@@ -11,6 +10,7 @@
       </div>
            <div class="navbar-collapse collapse">
     <ul class="nav navbar-nav navbar-right">
+
       <li><a href="" ng-click="logout()" ng-controller="logoutController">Logout</a></li>
     </ul>
   </div>
@@ -32,9 +32,9 @@
                    New Expense
                 </button>
 
-                       <button  id="btnfilter" type="button"
+                       <button  id="btnSum" type="button"
                         class="btn btn-sm btn-default pull-left">
-                  Filter by Date
+                  Total Expenses
                 </button>
                     </div>
 
@@ -53,7 +53,7 @@
         <div class="row">
             <div class="col-xs-12">
 
-                <div class="modal fade" tabindex="-1" id="filterModal"
+                <div class="modal fade" tabindex="-1" id="totalModal"
                      data-keyboard="false" data-backdrop="static">
                     <div class="modal-dialog modal-sm">
                         <div class="modal-content">
@@ -132,7 +132,7 @@
                                                   type="text" id="desc" required></textarea>
                                     </div>
                                     <div class="modal-footer">
-                                <input type="submit" class="btn btn-primary" id="ok"></input>
+                                <input type="submit" class="btn btn-primary"  id="ok" onclick="refresh()"></input>
 
                             </div>
                                 </form>
@@ -147,6 +147,91 @@
     </div>
 
     </div><!-- /.container -->
+
+
+
+<script type="text/javascript">
+
+    google.charts.load('current', {'packages':['corechart']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+      var jsonData = $.ajax({
+          url: "/data",
+          dataType: "json",
+          async: false
+          }).responseText;
+       console.log(jsonData);
+
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Category');
+        data.addColumn('number', 'Amount');
+        data.addRows(JSON.parse(jsonData));
+
+  var options = {
+          is3D: true
+        };
+
+
+      var chart = new google.visualization.PieChart(document.getElementById('pie'));
+      chart.draw(data, options);
+
+         var chart1 = new google.visualization.ColumnChart(document.getElementById('column'));
+      chart1.draw(data, {width: 500, height: 400});
+var ct=0;
+
+google.visualization.events.addListener(chart, 'select', function() {
+ct=ct+1;
+ var selection = chart.getSelection();
+  var message = '';
+  for (var i = 0; i < selection.length; i++) {
+    var item = selection[i];
+    if (item.row != null && item.column != null) {
+      var str = data.getFormattedValue(item.row, item.column);
+      message += '{row:' + item.row + ',column:' + item.column + '} = ' + str + '\n';
+    } else if (item.row != null) {
+      var str = data.getFormattedValue(item.row, 0);
+      message += '{row:' + item.row + ', column:none}; value (col 0) = ' + str + '\n';
+    } else if (item.column != null) {
+      var str = data.getFormattedValue(0, item.column);
+      message += '{row:none, column:' + item.column + '}; value (row 0) = ' + str + '\n';
+    }
+  }
+  if (message == '') {
+    message = 'nothing';
+  }
+  //alert( str);
+  var s=str;
+
+      var jsonData = $.ajax({
+          url: "/drill",
+          type:'POST',
+           data:JSON.stringify({'message':s}),
+          dataType: "json",
+          contentType: 'application/json; charset=UTF-8',
+          async: false
+          }).responseText;
+
+      //alert(jsonData);
+
+
+    var data1 = new google.visualization.DataTable();
+      data1.addColumn('string', 'Date');
+        data1.addColumn('number', 'Amount');
+
+        data1.addRows(JSON.parse(jsonData));
+
+       var drill = new google.visualization.ColumnChart(document.getElementById('column'));
+      drill.draw(data1, {width: 500, height: 400});
+      chart1.setSelection(chart.getSelection());
+});
+}
+window.onload=drawChart;
+
+
+ </script>
+
   <script>
 
 
@@ -193,7 +278,20 @@
 
 
 
+    $("#btnSum").click(function () {
+
+                $("#totalModal").modal('show');
+            });
+
+            $("#btnHideModal").click(function () {
+                $("#totalModal").modal('hide');
+            });
+
+
 });
+
+
+
 
 
 </script>
@@ -201,8 +299,7 @@
  <script>
 
      function refresh(){
-
-    location.reload();
+        location.reload();
      }
 
  </script>
