@@ -117,6 +117,25 @@ def expense():
                 status = "No"
                 return jsonify({'result': status})
 
+@app.route('/add_cat',methods=['POST'])
+def add_cat():
+        if request.method == 'POST':
+            c=category()
+            if request.json:
+                json_data = request.json
+                print json_data
+                c.cname = json_data['cat']
+                c.email=session['email'];
+                db.session.add(c)
+                db.session.commit()
+                status="success"
+                return jsonify({'result': status})
+            else:
+                print "No"
+                status = "No"
+                return jsonify({'result': status})
+
+
 
 class DateTimeEncoder(json.JSONEncoder):
     def default(self, obj):
@@ -152,6 +171,18 @@ def detail():
     print users;
     json_list = json.dumps(users)
     return json_list
+
+@app.route('/get_cat')
+def cat():
+    email=session['email']
+    #check=db.session.query(Expense.category, func.sum(Expense.amount)).filter(Expense.email==email).group_by(Expense.category).first()
+    c=db.session.query(category.cname).filter   (category.email==email).all()
+    print c
+    json_list = json.dumps(c)
+    print json_list
+    return json_list
+
+
 
 
 

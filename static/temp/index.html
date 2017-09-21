@@ -1,18 +1,26 @@
 
-
   <body>
  <nav class="navbar navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="" onclick="refresh()">Dashboard</a>
 
-
       </div>
-           <div class="navbar-collapse collapse">
-    <ul class="nav navbar-nav navbar-right">
 
-      <li><a href="" ng-click="logout()" ng-controller="logoutController">Logout</a></li>
-    </ul>
+           <div class="navbar-collapse collapse">
+
+<ul class="nav navbar-nav navbar-right">
+                    <li class="dropdown">
+                        <a href="" data-toggle="dropdown" class="dropdown-toggle">Admin<b class="caret"></b></a>
+                        <ul class="dropdown-menu">
+
+                            <li><a id="cat" onclick="add()">Add Category</a></li>
+
+                            <li class="divider"></li>
+                            <li><a href="" ng-click="logout()" ng-controller="logoutController">Logout</a></li>
+                        </ul>
+                    </li>
+                </ul>
   </div>
       </div>
     </nav>
@@ -28,11 +36,9 @@
 
                 <br>
                 <button  id="btnShowModal" type="button"
-                        class="btn btn-sm btn-default pull-right">
-                  Add New Expense
+                        class="btn btn-sm btn-default">
+                   Add New Expense
                 </button>
-
-
                     </div>
 
 
@@ -48,6 +54,91 @@
 
  <div class="container">
         <div class="row">
+            <div class="col-xs-12">
+
+                <div class="modal fade" tabindex="-1" id="totalModal"
+                     data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title">Enter the time period</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+                                    <div class="form-group">
+                                        <label for="from">From</label>
+                                        <input class="form-control"
+                                               type="date" id="from" required/>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="to">To</label>
+                                        <input class="form-control"
+                                               type="date" id="to" required />
+                                    </div>
+
+                                    <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary" id="filter"></input>
+
+                            </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    </div>
+ <div class="container">
+        <div class="row">
+            <div class="col-xs-12">
+
+                <div class="modal fade" tabindex="-1" id="addModal"
+                     data-keyboard="false" data-backdrop="static">
+                    <div class="modal-dialog modal-sm">
+                        <div class="modal-content">
+
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal">
+                                    &times;
+                                </button>
+                                <h4 class="modal-title">Enter new Category</h4>
+                            </div>
+                            <div class="modal-body">
+                                <form>
+
+                                    <div class="form-group">
+
+                                        <input class="form-control" type="text" id="a"  required />
+                                    </div>
+
+                                    <div class="modal-footer">
+                                <input type="submit" class="btn btn-primary" id="c"></input>
+
+                            </div>
+                                </form>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+
+ <div class="container">
+        <div class="row">
             <div class="col-xs-15">
 
                 <div class="modal fade" tabindex="-1" id="loginModal"
@@ -59,12 +150,12 @@
                                 <button type="button" class="close" data-dismiss="modal">
                                     &times;
                                 </button>
-                                <h4 class="modal-title">Add New Expense</h4>
+                                <h4 class="modal-title">Add Expense</h4>
                             </div>
                             <div class="modal-body">
                                 <form>
                                     <div class="form-group">
-                                        <label for="amount">Amount</label>
+                                        <label for="amount">Amount&nbsp;(Rs)</label>
                                         <input class="form-control"
                                                type="number" id="amount" required/>
                                     </div>
@@ -75,8 +166,9 @@
                                     </div>
                                      <div class="form-group">
                                         <label for="category">Category</label>
-                                        <input class="form-control"
-                                               type="text" id="category"  required/>
+                                         <select id="category" class="form-control" >
+                                             <option value="void">Select</option>
+                                         </select>
                                     </div>
                                      <div class="form-group">
                                         <label for="desc">Description</label>
@@ -179,17 +271,27 @@ ct=ct+1;
       chart1.setSelection(chart.getSelection());
 });
 }
-window.onload=drawChart;
-
-
  </script>
 
   <script>
 
 
       $(document).ready(function () {
-//alert("1");
+//alert("If you are first time user then please add category then start adding expenses. Thanku");
+
             $("#btnShowModal").click(function () {
+               // alert('1');
+            $.ajax({
+          url: "/get_cat",
+          dataType: "json",
+          async: false,
+          success: function (data) {for(var i=0;i<data.length;i++){
+            var opt = new Option(data[i]);
+            $("#category").append(opt);
+            }
+            }
+          });
+
 
                 $("#loginModal").modal('show');
             });
@@ -200,17 +302,12 @@ window.onload=drawChart;
 
             $('#ok').click(function() {
    var amount=$("#amount").val();
-
-   var date=$("#date").val();
-
-   var category=$("#category").val();
-
+    var date=$("#date").val();
+   var category=$("#category").find(":selected").text();
+   alert(category);
    var desc=$("#desc").val();
-
-
-
-   var formData = {'amount': amount, 'date' : date,'category': category, 'Description': desc};
-    //alert(formData);
+var formData = {'amount': amount, 'date' : date,'category': category, 'Description': desc};
+   // alert(formData);
 
         var res=$.ajax({
             type        : 'POST',
@@ -220,17 +317,12 @@ window.onload=drawChart;
             dataType    : 'json',
             async: false
         }).responseText;
-
-       // alert(res);
-
-
-
     $("#loginModal").modal('hide');
 });
 
 
 
-    $("#btnSum").click(function () {
+   $("#btnSum").click(function () {
 
                 $("#totalModal").modal('show');
             });
@@ -243,7 +335,32 @@ window.onload=drawChart;
 });
 
 
+function add(){
 
+//alert("HI");
+
+          $("#addModal").modal('show');
+
+            $('#c').click(function() {
+   var cat=$("#a").val();
+   //alert(cat);
+   var formData = {'cat': cat};
+
+        var res=$.ajax({
+            type        : 'POST',
+            url         : '/add_cat',
+            data        : JSON.stringify(formData),
+            contentType: "application/json; charset=utf-8",
+            dataType    : 'json',
+            async: false
+        }).responseText;
+        //alert(res);
+          $("#addModal").modal('hide');
+   });
+
+
+
+}
 
 
 </script>
@@ -255,6 +372,5 @@ window.onload=drawChart;
      }
 
  </script>
-
 
   </body>
