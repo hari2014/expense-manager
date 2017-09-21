@@ -30,12 +30,14 @@ class Expense(db.Model):
 
 
 class user_detail(db.Model):
+    uid = db.Column(db.Integer, autoincrement=True)
     uname = db.Column(db.String(30))
     email = db.Column(db.String(30),primary_key=True)
     username = db.Column(db.String(80))
     password = db.Column(db.String(80))
 
 class category(db.Model):
+    cid=db.Column(db.Integer, autoincrement=True,primary_key=True)
     cname=db.Column(db.String(30),primary_key=True)
     email=db.Column(db.String(50));
 
