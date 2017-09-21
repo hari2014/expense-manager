@@ -1,7 +1,7 @@
 from flask import Flask,render_template,redirect,flash,url_for,session, logging,request,jsonify,send_file,json
 import os
 from manage import db
-from manage import user_detail,Expense,expense_schema
+from manage import user_detail,Expense,expense_schema,category
 from forms import add_expense
 from sqlalchemy.sql import func,label
 from  collections import defaultdict
